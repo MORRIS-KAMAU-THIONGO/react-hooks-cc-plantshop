@@ -37,6 +37,26 @@ function PlantPage() {
     ));
   };
 
+  const handleUpdatePlant = async (id, updatedPlant) => {
+    try {
+      const response = await axios.patch(`http://localhost:6001/plants/${id}`, updatedPlant);
+      setPlants(plants.map(plant =>
+        plant.id === id ? { ...plant, ...response.data } : plant
+      ));
+    } catch (error) {
+      console.error("Error updating plant:", error);
+    }
+  };
+
+  const handleDeletePlant = async (id) => {
+    try {
+      await axios.delete(`http://localhost:6001/plants/${id}`);
+      setPlants(plants.filter(plant => plant.id !== id));
+    } catch (error) {
+      console.error("Error deleting plant:", error);
+    }
+  };
+
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
@@ -45,7 +65,7 @@ function PlantPage() {
     <main>
       <NewPlantForm onAddPlant={handleAddPlant} />
       <Search onSearch={handleSearch} />
-      <PlantList plants={plants} searchTerm={searchTerm} onToggleSoldOut={handleToggleSoldOut} />
+      <PlantList plants={plants} searchTerm={searchTerm} onToggleSoldOut={handleToggleSoldOut} onUpdatePlant={handleUpdatePlant} onDeletePlant={handleDeletePlant} />
     </main>
   );
 }
